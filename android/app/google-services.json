@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "912064990359",
+    "project_id": "gfb-44",
+    "storage_bucket": "gfb-44.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:912064990359:android:f97b96add5da4a143aedd2",
+        "android_client_info": {
+          "package_name": "net.codex.fluttersignin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyvcrdQVeNEdb2-FJpeU5rF78UYRIDQTs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
