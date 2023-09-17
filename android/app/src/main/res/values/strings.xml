@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resource>
-    <string name="app_name"> net.codex.fluttersignin</string> 
+    <string name="app_name"> FlutterAuth</string> 
     <string name="facebook_app_id">991821108697766</string>
     <string name="fb_login_protocol_scheme">fb1234</string>
     <string name="facebook_client_token">f6273f3bb6bfd3522d1e819a9bec08b4</string>
