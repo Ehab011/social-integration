@@ -92,7 +92,7 @@ class _HomePageState extends State<HomePage> {
                               borderRadius: 25,
                               color: Colors.red,
                               child: Wrap(
-                                children: [
+                                children: const[
                                   Icon(
                                     FontAwesomeIcons.google,
                                     size: 20,
@@ -108,20 +108,23 @@ class _HomePageState extends State<HomePage> {
                                         fontWeight: FontWeight.w500),
                                   )
                                 ],
-                              )),
-                          const SizedBox(
-                            height: 15,
-                          ),
+                              )
+                              ),
+                          const SizedBox(height: 15,),
+
                           RoundedLoadingButton(
                               controller: facebookController,
-                              onPressed: () {},
-                              successColor: Colors.red,
+                              onPressed: () {
+                                handleFacebookSignIn();
+                                
+                              },
+                              successColor: Colors.blue,
                               width: MediaQuery.of(context).size.width * 0.80,
                               elevation: 0,
                               borderRadius: 25,
                               color: Colors.blue,
                               child: Wrap(
-                                children: [
+                                children: const [
                                   Icon(
                                     FontAwesomeIcons.facebook,
                                     size: 20,
@@ -154,7 +157,6 @@ class _HomePageState extends State<HomePage> {
     if (ip.hasInternet == false) {
       openSnackbar(context, "Check your Internet connection", Colors.red);
       googleController.reset();
-      facebookController.reset();
     } else {
       await sp.signInWithGoogle().then((value) {
         if (sp.hasErrors == true) {
@@ -184,6 +186,44 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
+  //handle facebook signin
+  Future handleFacebookSignIn() async {
+    final sp = context.read<SignInProvider>();
+    final ip = context.read<InternetProvider>();
+    await ip.checkInternetConnection();
+
+    if (ip.hasInternet == false) {
+      openSnackbar(context, "Check your Internet connection", Colors.red);
+      facebookController.reset();
+    } else {
+      await sp.signInWithFacebook().then((value) {
+        if (sp.hasErrors == true) {
+          openSnackbar(context, sp.errorCode.toString(), Colors.blue);
+          facebookController.reset();
+        } else {
+          //check user existence
+          sp.checkUserExists().then((value) async {
+            if (value == true) {
+              //user exists
+              await sp.getUserDataFromFireStore(sp.uid).then((value) => sp
+                  .saveDataToSharedPreferences()
+                  .then((value) => sp.setSignInUser().then((value) {
+                        facebookController.success();
+                        handleAfterSignIn(); 
+                      })));
+            } else {
+              sp.saveDataToFirestore().then((value) => sp
+                  .saveDataToSharedPreferences()
+                  .then((value) => sp.setSignInUser().then((value) {
+                        facebookController.success();
+                        handleAfterSignIn();
+                      })));
+            }
+          });
+        }
+      });
+    }
+  }
 
   //handle after sign in
   handleAfterSignIn() async {
@@ -193,144 +233,3 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class Authentication extends StatefulWidget {
-  const Authentication({super.key});
-
-  @override
-  State<Authentication> createState() => _AuthenticationState();
-}
-
-class _AuthenticationState extends State<Authentication> {
-  final usernameController = TextEditingController();
-  final passwordController = TextEditingController();
-
-  //signuser in methods
-  void signUserIn() {}
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[300],
-      body: SafeArea(
-        child: Center(
-          child: Column(children: [
-            const SizedBox(
-              height: 50,
-            ),
-            //logo
-            const Icon(
-              Icons.lock,
-              size: 100,
-            ),
-
-            const SizedBox(
-              height: 50,
-            ),
-            // welcome
-            Text(
-              'Welcome back, Sir!',
-              style: TextStyle(color: Colors.grey[700], fontSize: 16),
-            ),
-            const SizedBox(
-              height: 35,
-            ),
-
-            //username
-            textFields(
-              controller: usernameController,
-              hintText: 'Username',
-              obscureText: false,
-            ),
-            const SizedBox(height: 15),
-
-            //Password
-            textFields(
-              controller: passwordController,
-              hintText: 'Password',
-              obscureText: true,
-            ),
-
-            const SizedBox(height: 10),
-
-            //forgot password
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(
-                    'Forgot Password?',
-                    style: TextStyle(color: Colors.grey[600]),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(
-              height: 25,
-            ),
-
-            //signin button
-            MyButton(
-              onTap: signUserIn,
-            ),
-
-            const SizedBox(
-              height: 45,
-            ),
-            //signin with fb/google
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Divider(
-                      thickness: 0.5,
-                      color: Colors.grey[400],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Text(
-                      'or continue with',
-                      style: TextStyle(color: Colors.grey[700]),
-                    ),
-                  ),
-                  Expanded(
-                    child: Divider(
-                      thickness: 0.5,
-                      color: Colors.grey[400],
-                    ),
-                  )
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-
-            //not a member?register
-            FloatingActionButton.extended(
-              onPressed: () async {
-                await LoginController().signInWithGoogle();
-                if (mounted) {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => ProfilePage()));
-                }
-              },
-              icon: Image.asset(
-                'lib/assets/google.png',
-                height: 32,
-                width: 32,
-              ),
-              label: const Text('Sign in with google'),
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
-            )
-          ]),
-        ),
-      ),
-    );
-  }
-}
