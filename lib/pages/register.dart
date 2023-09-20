@@ -30,7 +30,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Widget _buildBody() {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           colors: [
@@ -43,9 +43,9 @@ class _RegisterPageState extends State<RegisterPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          SizedBox(height: 60),
+          const SizedBox(height: 60),
           _buildHeader(),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Expanded(
             child: Container(
               decoration: _buildContainerDecoration(),
@@ -56,7 +56,7 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
     );
   }
-
+  //pretty much the same as homepage
   Widget _buildHeader() {
     return const Padding(
       padding: EdgeInsets.all(20),
@@ -163,7 +163,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   borderRadius: BorderRadius.circular(30),
                 ),
               ),
-              child: Text(
+              child: const Text(
                 "Register",
                 style: TextStyle(
                   color: Colors.white,
@@ -179,7 +179,7 @@ class _RegisterPageState extends State<RegisterPage> {
         Text.rich(
           TextSpan(
             text: "Already have an account? ",
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.black,
               fontSize: 14,
             ),

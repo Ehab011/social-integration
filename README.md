@@ -1,6 +1,6 @@
 # Flutter Social Media App
 
-Welcome to the Flutter Social Media App! This app allows users to sign in with their Facebook and Google accounts using Firebase Authentication. After logging in, users can view their profile details, including their name, profile photo, and email address.
+Welcome to the Flutter Social Media App! This app contains login, register forms and allows users to sign in with their Facebook and Google accounts using Firebase Authentication. After logging in, users can view their profile details, including their name, profile photo, and email address.
 
 ## Getting Started
 
@@ -27,6 +27,7 @@ To enable Facebook and Google sign-in, follow these steps:
 3. Follow the [Firebase Facebook authentication setup guide](https://firebase.google.com/docs/auth/flutter/facebook-login) to configure Facebook authentication.
 
 #### Google Integration
+
 
 1. Create a Google Cloud project in the [Google Cloud Console](https://console.cloud.google.com/).
 

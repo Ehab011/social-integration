@@ -7,6 +7,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+//backend implementation
 class SignInProvider extends ChangeNotifier {
   //firebase auth, facebook, google instances
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
@@ -66,6 +67,7 @@ class SignInProvider extends ChangeNotifier {
           .user!;
         //if (user != null) {
           //implement register logic
+          //future work
 
         //}
     } on FirebaseAuthException catch (e) {
@@ -120,6 +122,7 @@ class SignInProvider extends ChangeNotifier {
         _provider = "GOOGLE";
         _uid = userDetails.uid;
         notifyListeners();
+        //error handling notification
       } on FirebaseAuthException catch (e) {
         switch (e.code) {
           case "account-exists-with-different-credential":
@@ -148,7 +151,7 @@ class SignInProvider extends ChangeNotifier {
   //signin with facebook
   Future signInWithFacebook() async {
     final LoginResult result = await facebookAuth.login();
-    //get the profile
+    //get the profile for better quality
     final graphResponse = await http.get(Uri.parse(
         'https://graph.facebook.com/v2.12/me?fields=name,picture.width(800).height(800),first_name,last_name,email&access_token=${result.accessToken!.token}'));
 

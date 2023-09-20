@@ -44,6 +44,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  //Body of the Scaffold
   Widget _buildBody() {
     return Container(
       decoration: const BoxDecoration(
@@ -72,7 +73,7 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
+  //Header style
   Widget _buildHeader() {
     return const Padding(
       padding: EdgeInsets.all(20),
@@ -103,6 +104,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  //Content of scaffold(buttons,TextFields,...)
+
   Widget _buildContent() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -121,96 +124,28 @@ class _HomePageState extends State<HomePage> {
             key: _formKey,
             child: Column(
               children: [
-                TextFormField(
-                  onChanged: (val) {
-                    setState(() {
-                      email = val;
-                    });
-                  },
-                  validator: (val) {
-                    return RegExp(
-                            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                        .hasMatch(val!)
-                        ? null
-                        : "Please enter a valid email";
-                  },
-                  decoration: InputDecoration(
-                    labelText: "Email",
-                    labelStyle: TextStyle(color: Colors.orange[900]),
-                    prefixIcon: Icon(FontAwesomeIcons.envelope,
-                        color: Colors.orange[900]),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide(color: Colors.black26),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey.shade400)),
-                    fillColor: Colors.white,
-                    filled: true,
-                    hintStyle: TextStyle(color: Colors.grey[400]),
-                  ),
-                ),
+
+                //Email TextField
+                emailTextField(),
                 const SizedBox(height: 10),
-                
-                  TextFormField(
-                    onChanged: (val) {
-                      setState(() {
-                        password = val;
-                      });
-                    },
-                    validator: (val) {
-                      if (val!.length < 6) {
-                        return "Password must be 6 characters";
-                      } else {
-                        return null;
-                      }
-                    },
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      labelText: "Password",
-                      labelStyle: TextStyle(color: Colors.orange[900]),
-                      prefixIcon:
-                          Icon(FontAwesomeIcons.lock, color: Colors.orange[900]),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Colors.black26),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey.shade400)),
-                      fillColor: Colors.white,
-                      filled: true,
-                      hintStyle: TextStyle(color: Colors.grey[400]),
-                    ),
-                  ),
+
+                //password text field
+                  passwordTextField(),
                 const SizedBox(
                   height: 10,
                 ),
-                Text.rich(
-                  TextSpan(
-                    text: "Don't have an account? ",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 14,
-                    ),
-                    children: <TextSpan>[
-                      TextSpan(
-                        text: "Register here",
-                        style: TextStyle(
-                            color: Colors.black,
-                            decoration: TextDecoration.underline),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            nextScreen(context, RegisterPage());
-                          },
-                      ),
-                    ],
-                  ),
-                ),
+
+                //Don't have an account, register navigator
+                registerNavigator(),
                 const SizedBox(height: 20),
+
+                //Login button with email (not implemented yet)
                 _buildLoginButton(),
                 const SizedBox(height: 20),
                 _buildContinueWith(),
                 const SizedBox(height: 20),
+
+                //Login with google button
                 _buildSignInButton(
                   controller: googleController,
                   icon: FontAwesomeIcons.google,
@@ -220,6 +155,8 @@ class _HomePageState extends State<HomePage> {
                     _handleGoogleSignIn();
                   },
                 ),
+
+                //Login with facebook button
                 const SizedBox(height: 15),
                 _buildSignInButton(
                   controller: facebookController,
@@ -238,6 +175,95 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Text registerNavigator() {
+    return Text.rich(
+                TextSpan(
+                  text: "Don't have an account? ",
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                  ),
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: "Register here",
+                      style: const TextStyle(
+                          color: Colors.black,
+                          decoration: TextDecoration.underline),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          nextScreen(context, RegisterPage());
+                        },
+                    ),
+                  ],
+                ),
+              );
+  }
+
+  TextFormField passwordTextField() {
+    return TextFormField(
+                  onChanged: (val) {
+                    setState(() {
+                      password = val;
+                    });
+                  },
+                  validator: (val) {
+                    if (val!.length < 6) {
+                      return "Password must be 6 characters";
+                    } else {
+                      return null;
+                    }
+                  },
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: "Password",
+                    labelStyle: TextStyle(color: Colors.orange[900]),
+                    prefixIcon:
+                        Icon(FontAwesomeIcons.lock, color: Colors.orange[900]),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: const BorderSide(color: Colors.black26),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey.shade400)),
+                    fillColor: Colors.white,
+                    filled: true,
+                    hintStyle: TextStyle(color: Colors.grey[400]),
+                  ),
+                );
+  }
+
+  TextFormField emailTextField() {
+    return TextFormField(
+                onChanged: (val) {
+                  setState(() {
+                    email = val;
+                  });
+                },
+                validator: (val) {
+                  return RegExp(
+                          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                      .hasMatch(val!)
+                      ? null
+                      : "Please enter a valid email";
+                },
+                decoration: InputDecoration(
+                  labelText: "Email",
+                  labelStyle: TextStyle(color: Colors.orange[900]),
+                  prefixIcon: Icon(FontAwesomeIcons.envelope,
+                      color: Colors.orange[900]),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: const BorderSide(color: Colors.black26),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey.shade400)),
+                  fillColor: Colors.white,
+                  filled: true,
+                  hintStyle: TextStyle(color: Colors.grey[400]),
+                ),
+              );
+  }
+  //Email Login button
   Widget _buildLoginButton() {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.60,
@@ -264,7 +290,7 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
+  //Or Continue with text builder
   Widget _buildContinueWith() {
     return const Row(
       children: [
@@ -290,7 +316,7 @@ class _HomePageState extends State<HomePage> {
       ],
     );
   }
-
+  //Login button builder(facebook/google)
   Widget _buildSignInButton({
     required RoundedLoadingButtonController controller,
     required IconData icon,
@@ -328,7 +354,7 @@ class _HomePageState extends State<HomePage> {
   
 
 
-
+  //Read user data from shared preferences and check for internet connection
   Future<void> _handleGoogleSignIn() async {
     final sp = context.read<SignInProvider>();
     final ip = context.read<InternetProvider>();
@@ -366,7 +392,8 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
-  //handle facebook signin
+  //Read user data from shared preferences and check for internet connection
+
   Future _handleFacebookSignIn() async {
     final sp = context.read<SignInProvider>();
     final ip = context.read<InternetProvider>();
@@ -405,7 +432,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-
+  //1 second delay before navigation
   void _handleAfterSignIn() {
     Future.delayed(const Duration(milliseconds: 1000)).then((value) {
       nextScreenReplace(context, const ProfilePage());
