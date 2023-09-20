@@ -64,16 +64,17 @@ class SignInProvider extends ChangeNotifier {
       User user = (await firebaseAuth.createUserWithEmailAndPassword(
               email: email, password: password))
           .user!;
-        if (user != null) {
-          
+        //if (user != null) {
+          //implement register logic
 
-        }
+        //}
     } on FirebaseAuthException catch (e) {
+      
 
     }
   }
 
-  Future signInWithEmail(String email, String password) async {
+  Future signInWithEmail(String email, String password) async { 
     try {
       final UserCredential userCredential = await firebaseAuth
           .signInWithEmailAndPassword(email: email, password: password);
