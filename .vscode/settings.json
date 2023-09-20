@@ -1,0 +1,4 @@
+{
+    "avdmanager.sdkManager": "/home/ehab/Android/Sdk/cmdline-tools/latest/bin/sdkmanager",
+    "avdmanager.executable": "/home/ehab/Android/Sdk/emulator/emulator"
+}

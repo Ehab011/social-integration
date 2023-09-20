@@ -1,14 +1,12 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttersignin/components/my_button.dart';
-import 'package:fluttersignin/components/my_textfield.dart';
-import 'package:fluttersignin/controller/login_controller.dart';
 import 'package:fluttersignin/pages/profile.dart';
+import 'package:fluttersignin/pages/register.dart';
 import 'package:fluttersignin/providers/internet_provider.dart';
 import 'package:fluttersignin/providers/sign_in_provider.dart';
 import 'package:fluttersignin/utils/nextscreen.dart';
 import 'package:fluttersignin/utils/snack_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
@@ -21,6 +19,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final GlobalKey _scaffoldKey = GlobalKey<ScaffoldState>();
+  final _formKey = GlobalKey<FormState>();
+
+  String email = "";
+  String password = "";
+
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   final RoundedLoadingButtonController googleController =
       RoundedLoadingButtonController();
@@ -30,126 +35,301 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            colors: [
-              Colors.deepOrange,
-              Colors.orange,
-              Colors.deepOrange,
-            ],
+    return SafeArea(
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        key: _scaffoldKey,
+        body: _buildBody(),
+      ),
+    );
+  }
+
+  Widget _buildBody() {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          colors: [
+            Color.fromARGB(255, 230, 81, 0),
+            Color.fromARGB(255, 239, 108, 0),
+            Color.fromARGB(255, 255, 167, 38),
+          ],
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const SizedBox(height: 60),
+          _buildHeader(),
+          const SizedBox(height: 20),
+          Expanded(
+            child: Container(
+              decoration: _buildContainerDecoration(),
+              child: _buildContent(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return const Padding(
+      padding: EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            "Login",
+            style: TextStyle(color: Colors.white, fontSize: 40),
+          ),
+          SizedBox(height: 10),
+          Text(
+            "Welcome Back",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+        ],
+      ),
+    );
+  }
+
+  BoxDecoration _buildContainerDecoration() {
+    return const BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(60),
+        topRight: Radius.circular(60),
+      ),
+    );
+  }
+
+  Widget _buildContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        const SizedBox(height: 30),
+        Icon(
+          FontAwesomeIcons.userAstronaut,
+          size: 50,
+          color: Colors.orange[900],
+        ),
+        const SizedBox(height: 20),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                TextFormField(
+                  onChanged: (val) {
+                    setState(() {
+                      email = val;
+                    });
+                  },
+                  validator: (val) {
+                    return RegExp(
+                            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                        .hasMatch(val!)
+                        ? null
+                        : "Please enter a valid email";
+                  },
+                  decoration: InputDecoration(
+                    labelText: "Email",
+                    labelStyle: TextStyle(color: Colors.orange[900]),
+                    prefixIcon: Icon(FontAwesomeIcons.envelope,
+                        color: Colors.orange[900]),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide(color: Colors.black26),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey.shade400)),
+                    fillColor: Colors.white,
+                    filled: true,
+                    hintStyle: TextStyle(color: Colors.grey[400]),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                
+                  TextFormField(
+                    onChanged: (val) {
+                      setState(() {
+                        password = val;
+                      });
+                    },
+                    validator: (val) {
+                      if (val!.length < 6) {
+                        return "Password must be 6 characters";
+                      } else {
+                        return null;
+                      }
+                    },
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      labelText: "Password",
+                      labelStyle: TextStyle(color: Colors.orange[900]),
+                      prefixIcon:
+                          Icon(FontAwesomeIcons.lock, color: Colors.orange[900]),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide(color: Colors.black26),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey.shade400)),
+                      fillColor: Colors.white,
+                      filled: true,
+                      hintStyle: TextStyle(color: Colors.grey[400]),
+                    ),
+                  ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text.rich(
+                  TextSpan(
+                    text: "Don't have an account? ",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 14,
+                    ),
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: "Register here",
+                        style: TextStyle(
+                            color: Colors.black,
+                            decoration: TextDecoration.underline),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            nextScreen(context, RegisterPage());
+                          },
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                _buildLoginButton(),
+                const SizedBox(height: 20),
+                _buildContinueWith(),
+                const SizedBox(height: 20),
+                _buildSignInButton(
+                  controller: googleController,
+                  icon: FontAwesomeIcons.google,
+                  color: Colors.red,
+                  text: "Google",
+                  onPressed: () {
+                    _handleGoogleSignIn();
+                  },
+                ),
+                const SizedBox(height: 15),
+                _buildSignInButton(
+                  controller: facebookController,
+                  icon: FontAwesomeIcons.facebook,
+                  color: Colors.blue,
+                  text: "Facebook",
+                  onPressed: () {
+                    _handleFacebookSignIn();
+                  },
+                ),
+              ],
+            ),
           ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            const SizedBox(
-              height: 80,
-            ),
-            Padding(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    "Login",
-                    style: TextStyle(color: Colors.white, fontSize: 40),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    "Welcome Back",
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Expanded(
-                child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(60),
-                          topRight: Radius.circular(60)),
-                    ),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          RoundedLoadingButton(
-                              controller: googleController,
-                              onPressed: () {
-                                handleGoogleSignIn();
-                              },
-                              successColor: Colors.red,
-                              width: MediaQuery.of(context).size.width * 0.80,
-                              elevation: 0,
-                              borderRadius: 25,
-                              color: Colors.red,
-                              child: Wrap(
-                                children: const[
-                                  Icon(
-                                    FontAwesomeIcons.google,
-                                    size: 20,
-                                    color: Colors.white,
-                                  ),
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  Text(
-                                    "Sign in with Google",
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w500),
-                                  )
-                                ],
-                              )
-                              ),
-                          const SizedBox(height: 15,),
+      ],
+    );
+  }
 
-                          RoundedLoadingButton(
-                              controller: facebookController,
-                              onPressed: () {
-                                handleFacebookSignIn();
-                                
-                              },
-                              successColor: Colors.blue,
-                              width: MediaQuery.of(context).size.width * 0.80,
-                              elevation: 0,
-                              borderRadius: 25,
-                              color: Colors.blue,
-                              child: Wrap(
-                                children: const [
-                                  Icon(
-                                    FontAwesomeIcons.facebook,
-                                    size: 20,
-                                    color: Colors.white,
-                                  ),
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  Text(
-                                    "Sign in with Facebook",
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w500),
-                                  )
-                                ],
-                              )),
-                        ])))
-          ],
+  Widget _buildLoginButton() {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.60,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 25.0),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            primary: Colors.orange[900],
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+          ),
+          child: const Text(
+            "Login",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          onPressed: () {},
         ),
       ),
     );
   }
 
-  //handle google signin
-  Future handleGoogleSignIn() async {
+  Widget _buildContinueWith() {
+    return const Row(
+      children: [
+        Expanded(
+          child: Divider(
+            thickness: 0.5,
+            color: Colors.grey,
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10.0),
+          child: Text(
+            "Or Continue with",
+            style: TextStyle(color: Colors.grey),
+          ),
+        ),
+        Expanded(
+          child: Divider(
+            thickness: 0.5,
+            color: Colors.grey,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSignInButton({
+    required RoundedLoadingButtonController controller,
+    required IconData icon,
+    required Color color,
+    required String text,
+    required VoidCallback onPressed,
+  }) {
+    return RoundedLoadingButton(
+      controller: controller,
+      onPressed: onPressed,
+      successColor: color,
+      width: MediaQuery.of(context).size.width * 0.40,
+      elevation: 0,
+      borderRadius: 25,
+      color: color,
+      child: Wrap(
+        children: [
+          Icon(
+            icon,
+            size: 20,
+            color: Colors.white,
+          ),
+          SizedBox(
+            width: 15,
+          ),
+          Text(
+            text,
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+          )
+        ],
+      ),
+    );
+  }
+
+  
+
+
+
+  Future<void> _handleGoogleSignIn() async {
     final sp = context.read<SignInProvider>();
     final ip = context.read<InternetProvider>();
     await ip.checkInternetConnection();
@@ -163,22 +343,22 @@ class _HomePageState extends State<HomePage> {
           openSnackbar(context, sp.errorCode.toString(), Colors.red);
           googleController.reset();
         } else {
-          //check user existence
+          // Check user existence
           sp.checkUserExists().then((value) async {
             if (value == true) {
-              //user exists
+              // User exists
               await sp.getUserDataFromFireStore(sp.uid).then((value) => sp
                   .saveDataToSharedPreferences()
                   .then((value) => sp.setSignInUser().then((value) {
                         googleController.success();
-                        handleAfterSignIn(); 
+                        _handleAfterSignIn();
                       })));
             } else {
               sp.saveDataToFirestore().then((value) => sp
                   .saveDataToSharedPreferences()
                   .then((value) => sp.setSignInUser().then((value) {
                         googleController.success();
-                        handleAfterSignIn();
+                        _handleAfterSignIn();
                       })));
             }
           });
@@ -187,7 +367,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
   //handle facebook signin
-  Future handleFacebookSignIn() async {
+  Future _handleFacebookSignIn() async {
     final sp = context.read<SignInProvider>();
     final ip = context.read<InternetProvider>();
     await ip.checkInternetConnection();
@@ -209,14 +389,14 @@ class _HomePageState extends State<HomePage> {
                   .saveDataToSharedPreferences()
                   .then((value) => sp.setSignInUser().then((value) {
                         facebookController.success();
-                        handleAfterSignIn(); 
+                        _handleAfterSignIn();
                       })));
             } else {
               sp.saveDataToFirestore().then((value) => sp
                   .saveDataToSharedPreferences()
                   .then((value) => sp.setSignInUser().then((value) {
                         facebookController.success();
-                        handleAfterSignIn();
+                        _handleAfterSignIn();
                       })));
             }
           });
@@ -225,11 +405,16 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  //handle after sign in
-  handleAfterSignIn() async {
+
+  void _handleAfterSignIn() {
     Future.delayed(const Duration(milliseconds: 1000)).then((value) {
       nextScreenReplace(context, const ProfilePage());
     });
   }
+
 }
 
+
+  
+
+  

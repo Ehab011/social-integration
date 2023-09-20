@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -58,6 +56,41 @@ class SignInProvider extends ChangeNotifier {
     s.setBool('signed_in', true);
     _isSignedIn = true;
     notifyListeners();
+  }
+
+  Future registerWithEmail(
+      String fullName, String email, String password) async {
+    try {
+      User user = (await firebaseAuth.createUserWithEmailAndPassword(
+              email: email, password: password))
+          .user!;
+        if (user != null) {
+          
+
+        }
+    } on FirebaseAuthException catch (e) {
+
+    }
+  }
+
+  Future signInWithEmail(String email, String password) async {
+    try {
+      final UserCredential userCredential = await firebaseAuth
+          .signInWithEmailAndPassword(email: email, password: password);
+      print("signed in with email");
+
+      if (userCredential.user != null) {
+        _email = userCredential.user!.email;
+        _uid = userCredential.user!.uid;
+        _provider = "EMAIL";
+        _hasErrors = false;
+        notifyListeners();
+      }
+    } on FirebaseAuthException catch (e) {
+      _errorCode = e.message;
+      _hasErrors = true;
+      notifyListeners();
+    }
   }
 
   //signin with google
